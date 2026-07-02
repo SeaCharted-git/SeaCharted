@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
-import { AuthBadge } from '@/components/auth-badge';
 import { MapView } from '@/components/map-view';
 import { ThemedView } from '@/components/themed-view';
 import { getSites } from '@/lib/sites/getSites';
@@ -17,7 +16,6 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <MapView sites={sites} />
-      <AuthBadge />
     </ThemedView>
   );
 }

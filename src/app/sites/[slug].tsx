@@ -1,12 +1,14 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { fetchWeatherSample, type WeatherSample } from '@/lib/conditions/openMeteo';
+import { SIGHTING_COUNT_OPTIONS } from '@/lib/profile/labels';
+import { getRecentSightingsAtSite, type SiteRecentSighting } from '@/lib/research/queries';
 import { getSiteBySlug, getSites } from '@/lib/sites/getSites';
 import type { DiveSite } from '@/lib/types';
 
@@ -21,6 +23,7 @@ export default function SitePage() {
   const [siteLoaded, setSiteLoaded] = useState(false);
   const [conditions, setConditions] = useState<WeatherSample | null>(null);
   const [conditionsError, setConditionsError] = useState<string | null>(null);
+  const [sightings, setSightings] = useState<SiteRecentSighting[] | null>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -38,6 +41,9 @@ export default function SitePage() {
       .catch((err: unknown) =>
         setConditionsError(err instanceof Error ? err.message : 'Failed to load conditions'),
       );
+    getRecentSightingsAtSite(site.id)
+      .then(setSightings)
+      .catch(() => setSightings([]));
   }, [site]);
 
   if (siteLoaded && !site) {
@@ -150,6 +156,42 @@ export default function SitePage() {
               </>
             )}
           </ThemedView>
+
+          <ThemedView type="backgroundElement" style={styles.conditionsCard}>
+            <ThemedText type="subtitle">Recent sightings</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              From public dive logs at this site.
+            </ThemedText>
+            {sightings === null ? (
+              <ThemedText type="small" themeColor="textSecondary">Loading…</ThemedText>
+            ) : sightings.length === 0 ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                No public sightings yet — be the first to log one.
+              </ThemedText>
+            ) : (
+              <View style={styles.sightList}>
+                {sightings.slice(0, 10).map((s) => (
+                  <View key={s.id} style={styles.sightRow}>
+                    <View style={{ flex: 1 }}>
+                      {s.species ? (
+                        <Link href={`/research/species/${s.species.slug}`} asChild>
+                          <ThemedText type="link">{s.species.common_name}</ThemedText>
+                        </Link>
+                      ) : (
+                        <ThemedText type="default">Unknown</ThemedText>
+                      )}
+                      <ThemedText type="small" themeColor="textSecondary">
+                        {s.species?.scientific_name}
+                      </ThemedText>
+                    </View>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {SIGHTING_COUNT_OPTIONS.find((c) => c.value === s.count_bucket)?.label ?? s.count_bucket}
+                    </ThemedText>
+                  </View>
+                ))}
+              </View>
+            )}
+          </ThemedView>
         </ScrollView>
       </ThemedView>
     </>
@@ -200,5 +242,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: Spacing.one,
+  },
+  sightList: {
+    gap: Spacing.two,
+    marginTop: Spacing.two,
+  },
+  sightRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+    padding: Spacing.two,
   },
 });

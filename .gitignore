@@ -39,6 +39,12 @@ yarn-error.*
 supabase/.temp/
 supabase/.branches/
 
+# local docs (contains copyrighted PDF used for species names only, not for redistribution)
+docs/
+
+# scratch workspace for species extraction
+tmp/
+
 # typescript
 *.tsbuildinfo
 
