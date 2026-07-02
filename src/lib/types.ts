@@ -22,12 +22,41 @@ export interface DiveSite {
   created_at: string;
 }
 
+export type AgeRange =
+  | 'under_18'
+  | '18_24'
+  | '25_34'
+  | '35_44'
+  | '45_54'
+  | '55_64'
+  | '65_plus'
+  | 'prefer_not_to_say';
+
+export type Gender = 'male' | 'female' | 'non_binary' | 'prefer_not_to_say';
+
+export type CertificationOrg =
+  | 'padi'
+  | 'ssi'
+  | 'naui'
+  | 'bsac'
+  | 'cmas'
+  | 'raid'
+  | 'sdi_tdi'
+  | 'other';
+
 export interface Profile {
   id: string;
   display_name: string | null;
   home_location: string | null;
   avatar_url: string | null;
   is_public: boolean;
+  age_range: AgeRange | null;
+  gender: Gender | null;
+  nationality: string | null;
+  certification_org: CertificationOrg | null;
+  certification_level: string | null;
+  dives_prior_to_app: number;
+  interests: string[];
 }
 
 export interface Dive {
