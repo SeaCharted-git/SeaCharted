@@ -61,5 +61,3 @@ on conflict (scientific_name) do update set
 
 fs.writeFileSync('supabase/migrations/20260702000005_seed_species.sql', sql);
 console.log('wrote species migration with', all.length, 'rows');
-`;
-`;
