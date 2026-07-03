@@ -1,6 +1,5 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -8,13 +7,19 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { supabase } from '@/lib/supabase/client';
 
+function redirectTo(): string | undefined {
+  if (Platform.OS !== 'web') return undefined;
+  if (typeof window === 'undefined') return undefined;
+  return window.location.origin + '/';
+}
+
 export default function SignInScreen() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
-  async function sendCode() {
+  async function sendLink() {
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !trimmed.includes('@')) {
       setError('Enter a valid email address.');
@@ -25,15 +30,45 @@ export default function SignInScreen() {
     try {
       const { error: err } = await supabase.auth.signInWithOtp({
         email: trimmed,
-        options: { shouldCreateUser: true },
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectTo(),
+        },
       });
       if (err) throw err;
-      router.push({ pathname: '/auth/verify', params: { email: trimmed } });
+      setSent(true);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Could not send code.');
+      setError(e instanceof Error ? e.message : 'Could not send link.');
     } finally {
       setBusy(false);
     }
+  }
+
+  if (sent) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.inner}>
+          <ThemedText type="title">Check your email</ThemedText>
+          <ThemedText type="default">
+            We sent a sign-in link to <ThemedText type="default" style={styles.emailStrong}>{email}</ThemedText>.
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Click the link in the email to sign in. You can close this tab — the link will open a new one.
+          </ThemedText>
+          <Pressable
+            onPress={() => {
+              setSent(false);
+              setEmail('');
+            }}
+            style={styles.buttonGhost}
+          >
+            <ThemedText type="small" themeColor="textSecondary">
+              Wrong email? Try again
+            </ThemedText>
+          </Pressable>
+        </SafeAreaView>
+      </ThemedView>
+    );
   }
 
   return (
@@ -41,7 +76,7 @@ export default function SignInScreen() {
       <SafeAreaView style={styles.inner}>
         <ThemedText type="title">Sign in</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Enter your email and we&apos;ll send you a 6-digit code.
+          Enter your email and we&apos;ll send you a one-click sign-in link.
         </ThemedText>
 
         <TextInput
@@ -55,7 +90,7 @@ export default function SignInScreen() {
           keyboardType="email-address"
           inputMode="email"
           autoComplete="email"
-          onSubmitEditing={sendCode}
+          onSubmitEditing={sendLink}
           returnKeyType="send"
         />
 
@@ -66,7 +101,7 @@ export default function SignInScreen() {
         ) : null}
 
         <Pressable
-          onPress={sendCode}
+          onPress={sendLink}
           disabled={busy}
           style={({ pressed }) => [
             styles.button,
@@ -77,7 +112,7 @@ export default function SignInScreen() {
             <ActivityIndicator />
           ) : (
             <ThemedText type="default" style={styles.buttonText}>
-              Send code
+              Send sign-in link
             </ThemedText>
           )}
         </Pressable>
@@ -112,6 +147,10 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.two,
     alignItems: 'center',
   },
+  buttonGhost: {
+    padding: Spacing.two,
+    alignItems: 'center',
+  },
   buttonDisabled: {
     opacity: 0.6,
   },
@@ -121,5 +160,8 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#ff6b6b',
+  },
+  emailStrong: {
+    fontWeight: '700',
   },
 });
