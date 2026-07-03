@@ -42,6 +42,49 @@ export function MapView({ sites }: MapViewProps) {
     const markers: mapboxgl.Marker[] = [];
 
     map.on('load', () => {
+      map.addSource('dive-site-labels', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: sites.map((s) => ({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [s.lng, s.lat] },
+            properties: { name: s.name },
+          })),
+        },
+      });
+
+      map.addLayer({
+        id: 'dive-site-labels',
+        type: 'symbol',
+        source: 'dive-site-labels',
+        minzoom: 11,
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-size': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            11, 11,
+            14, 13,
+            18, 16,
+          ],
+          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+          'text-radial-offset': 1.1,
+          'text-justify': 'auto',
+          'text-max-width': 8,
+          'text-allow-overlap': false,
+          'text-ignore-placement': false,
+          'text-padding': 3,
+        },
+        paint: {
+          'text-color': '#ffffff',
+          'text-halo-color': 'rgba(0, 0, 0, 0.85)',
+          'text-halo-width': 1.5,
+        },
+      });
+
       for (const site of sites) {
         const el = document.createElement('button');
         el.type = 'button';
