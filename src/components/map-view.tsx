@@ -1,29 +1,60 @@
-import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
+import RNMapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import type { DiveSite } from '@/lib/types';
 
 export interface MapViewProps {
   sites: DiveSite[];
 }
 
+const COZUMEL_REGION = {
+  latitude: 20.42,
+  longitude: -86.95,
+  latitudeDelta: 0.35,
+  longitudeDelta: 0.25,
+};
+
+const MARKER_COLOR = '#00c1d1';
+
 export function MapView({ sites }: MapViewProps) {
+  const router = useRouter();
+
+  const initialRegion = useMemo(() => COZUMEL_REGION, []);
+
   return (
-    <ThemedView style={styles.placeholder}>
-      <ThemedText type="subtitle">Map view</ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
-        {sites.length} site{sites.length === 1 ? '' : 's'} · Native map coming in v2.
-      </ThemedText>
-    </ThemedView>
+    <View style={styles.container}>
+      <RNMapView
+        provider={PROVIDER_DEFAULT}
+        style={styles.map}
+        initialRegion={initialRegion}
+        mapType="hybrid"
+        showsCompass
+        showsScale
+      >
+        {sites.map((s) => (
+          <Marker
+            key={s.id}
+            coordinate={{ latitude: s.lat, longitude: s.lng }}
+            title={s.name}
+            description={s.difficulty ?? undefined}
+            pinColor={MARKER_COLOR}
+            onCalloutPress={() =>
+              router.push({ pathname: '/sites/[slug]', params: { slug: s.slug } })
+            }
+          />
+        ))}
+      </RNMapView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  placeholder: {
+  container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+  },
+  map: {
+    flex: 1,
   },
 });
