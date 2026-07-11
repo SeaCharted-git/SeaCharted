@@ -30,8 +30,12 @@ export default function RootLayout() {
               options={{ title: 'Research', drawerLabel: 'Research' }}
             />
             <Drawer.Screen
-              name="profile"
+              name="profile/index"
               options={{ title: 'Profile', drawerLabel: 'Profile' }}
+            />
+            <Drawer.Screen
+              name="profile/gallery"
+              options={{ drawerItemStyle: { display: 'none' }, title: 'Gallery' }}
             />
 
             <Drawer.Screen

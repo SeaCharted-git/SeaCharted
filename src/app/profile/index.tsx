@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 
@@ -107,6 +108,16 @@ function ProfileEditor() {
           <ThemedText type="small" themeColor="textSecondary">
             Total dives: {totalDives}  ({appDives} logged here + {profile.dives_prior_to_app} prior)
           </ThemedText>
+          <Link href="/profile/gallery" asChild>
+            <Pressable style={styles.galleryTile}>
+              <ThemedText type="smallBold" style={styles.galleryTileText}>
+                View gallery →
+              </ThemedText>
+              <ThemedText type="small" style={styles.galleryTileHint}>
+                All your dive photos in one place.
+              </ThemedText>
+            </Pressable>
+          </Link>
         </View>
 
         <FormField label="Display name">
@@ -274,8 +285,24 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerCard: {
-    gap: Spacing.one,
+    gap: Spacing.two,
     paddingBottom: Spacing.three,
+  },
+  galleryTile: {
+    marginTop: Spacing.two,
+    padding: Spacing.three,
+    borderRadius: Spacing.two,
+    borderWidth: 1,
+    borderColor: '#00c1d1',
+    backgroundColor: '#003b41',
+    gap: 2,
+  },
+  galleryTileText: {
+    color: '#7ee9f2',
+  },
+  galleryTileHint: {
+    color: '#7ee9f2',
+    opacity: 0.8,
   },
   publicRow: {
     flexDirection: 'row',
