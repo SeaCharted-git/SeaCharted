@@ -143,7 +143,10 @@ function ProfileEditor() {
           />
         </FormField>
 
-        <FormField label="Age range" hint="Privacy: bucketed, not exact age">
+        <FormField
+          label="Age range"
+          hint="Privacy: we intentionally store an age bucket, not your exact age. Your birth year is never collected."
+        >
           <PillSelect
             value={profile.age_range}
             onChange={(v) => patch({ age_range: v })}

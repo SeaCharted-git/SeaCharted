@@ -1,5 +1,6 @@
+import { Image } from 'expo-image';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { FormField, inputStyles } from '@/components/form/FormField';
 import { PillSelect } from '@/components/form/PillSelect';
@@ -11,8 +12,9 @@ import {
   deleteObservation,
   listObservationsForDive,
 } from '@/lib/observations/getObservations';
+import { listPhotosForDive, publicUrl } from '@/lib/photos/upload';
 import { OBSERVATION_BUCKET_OPTIONS } from '@/lib/profile/labels';
-import type { Observation, ObservationBucket } from '@/lib/types';
+import type { DivePhoto, Observation, ObservationBucket } from '@/lib/types';
 
 interface Props {
   diveId: string;
@@ -20,15 +22,22 @@ interface Props {
 
 export function DiveObservations({ diveId }: Props) {
   const [rows, setRows] = useState<Observation[] | null>(null);
+  const [photos, setPhotos] = useState<DivePhoto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [bucket, setBucket] = useState<ObservationBucket>('anomaly');
   const [text, setText] = useState('');
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
-      setRows(await listObservationsForDive(diveId));
+      const [obs, pics] = await Promise.all([
+        listObservationsForDive(diveId),
+        listPhotosForDive(diveId),
+      ]);
+      setRows(obs);
+      setPhotos(pics);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     }
@@ -50,10 +59,11 @@ export function DiveObservations({ diveId }: Props) {
         dive_id: diveId,
         bucket,
         description: text.trim(),
-        photo_id: null,
+        photo_id: selectedPhotoId,
       });
       setText('');
       setBucket('anomaly');
+      setSelectedPhotoId(null);
       setAdding(false);
       await refresh();
     } catch (e: unknown) {
@@ -117,12 +127,45 @@ export function DiveObservations({ diveId }: Props) {
                 </View>
               ))}
             </View>
+          ) : text.trim() ? (
+            <View style={styles.warnBanner}>
+              <ThemedText type="small" style={styles.warnText}>
+                No hashtags — this observation will save but won&apos;t appear in the citizen-science database.
+                Add e.g. #brain_coral or #tailless_eagle_ray to include it.
+              </ThemedText>
+            </View>
           ) : null}
+          <FormField
+            label="Attach a photo (optional)"
+            hint="Link this observation to a photo you already added to this dive. Useful for diseases, anomalies, or unlisted species."
+          >
+            {photos.length === 0 ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                No photos on this dive yet — add one in the Photos section above to link it here.
+              </ThemedText>
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoStrip}>
+                {photos.map((p) => {
+                  const sel = selectedPhotoId === p.id;
+                  return (
+                    <Pressable
+                      key={p.id}
+                      onPress={() => setSelectedPhotoId(sel ? null : p.id)}
+                      style={[styles.photoTile, sel && styles.photoTileSel]}
+                    >
+                      <Image source={{ uri: publicUrl(p.storage_path) }} style={styles.photoImage} contentFit="cover" />
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            )}
+          </FormField>
           <View style={styles.buttonRow}>
             <Pressable
               onPress={() => {
                 setAdding(false);
                 setText('');
+                setSelectedPhotoId(null);
               }}
               disabled={busy}
               style={[styles.secondaryButton, styles.flex]}
@@ -159,8 +202,16 @@ export function DiveObservations({ diveId }: Props) {
           {rows.map((o) => {
             const bucketLabel =
               OBSERVATION_BUCKET_OPTIONS.find((b) => b.value === o.bucket)?.label ?? o.bucket;
+            const linkedPhoto = o.photo_id ? photos.find((p) => p.id === o.photo_id) : null;
             return (
               <View key={o.id} style={styles.rowCard}>
+                {linkedPhoto ? (
+                  <Image
+                    source={{ uri: publicUrl(linkedPhoto.storage_path) }}
+                    style={styles.rowCardPhoto}
+                    contentFit="cover"
+                  />
+                ) : null}
                 <View style={{ flex: 1 }}>
                   <ThemedText type="smallBold">{bucketLabel}</ThemedText>
                   <ThemedText type="default">{o.description}</ThemedText>
@@ -212,15 +263,51 @@ const styles = StyleSheet.create({
   tagText: {
     color: '#7ee9f2',
   },
+  warnBanner: {
+    padding: Spacing.two,
+    borderRadius: Spacing.two,
+    borderWidth: 1,
+    borderColor: '#8a6d1a',
+    backgroundColor: '#2a2010',
+  },
+  warnText: {
+    color: '#f2c76b',
+  },
   stack: {
     gap: Spacing.two,
   },
   rowCard: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.three,
     padding: Spacing.three,
     borderRadius: Spacing.two,
     backgroundColor: '#111',
+  },
+  rowCardPhoto: {
+    width: 60,
+    height: 60,
+    borderRadius: Spacing.two,
+    backgroundColor: '#222',
+  },
+  photoStrip: {
+    gap: Spacing.two,
+    paddingVertical: Spacing.one,
+  },
+  photoTile: {
+    borderRadius: Spacing.two,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    padding: 2,
+  },
+  photoTileSel: {
+    borderColor: '#00c1d1',
+  },
+  photoImage: {
+    width: 80,
+    height: 80,
+    borderRadius: Spacing.two - 2,
+    backgroundColor: '#222',
   },
   buttonRow: {
     flexDirection: 'row',
