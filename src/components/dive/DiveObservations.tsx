@@ -37,7 +37,9 @@ export function DiveObservations({ diveId }: Props) {
         listPhotosForDive(diveId),
       ]);
       setRows(obs);
-      setPhotos(pics);
+      // Observations attach photographic evidence per spec; videos not eligible.
+      // Videos not eligible; treat missing media_type as photo (pre-Phase-C rows).
+      setPhotos(pics.filter((p) => p.media_type !== 'video'));
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     }

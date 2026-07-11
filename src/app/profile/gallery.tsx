@@ -9,7 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { publicUrl } from '@/lib/photos/upload';
+import { posterUrl } from '@/lib/photos/upload';
 import { getUserPhotos, type UserPhoto } from '@/lib/photos/getUserPhotos';
 
 export default function GalleryScreen() {
@@ -81,25 +81,37 @@ function Gallery() {
           </ThemedText>
         </View>
         <View style={styles.grid}>
-          {photos.map((p) => (
-            <Link key={p.id} href={`/dives/${p.dives.id}`} asChild>
-              <Pressable style={styles.tile}>
-                <Image
-                  source={{ uri: publicUrl(p.storage_path) }}
-                  style={styles.image}
-                  contentFit="cover"
-                />
-                <View style={styles.caption}>
-                  <ThemedText type="small" numberOfLines={1}>
-                    {p.dives.dive_sites?.name ?? 'Unknown site'}
-                  </ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-                    {p.dives.dive_date}
-                  </ThemedText>
-                </View>
-              </Pressable>
-            </Link>
-          ))}
+          {photos.map((p) => {
+            const thumb = posterUrl(p);
+            return (
+              <Link key={p.id} href={`/dives/${p.dives.id}`} asChild>
+                <Pressable style={styles.tile}>
+                  <View style={styles.imageWrap}>
+                    {thumb ? (
+                      <Image source={{ uri: thumb }} style={styles.image} contentFit="cover" />
+                    ) : (
+                      <View style={[styles.image, styles.imagePlaceholder]}>
+                        <ThemedText type="small" themeColor="textSecondary">Video</ThemedText>
+                      </View>
+                    )}
+                    {p.media_type === 'video' ? (
+                      <View style={styles.playBadge}>
+                        <ThemedText type="small" style={styles.playBadgeText}>▶</ThemedText>
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.caption}>
+                    <ThemedText type="small" numberOfLines={1}>
+                      {p.dives.dive_sites?.name ?? 'Unknown site'}
+                    </ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+                      {p.dives.dive_date}
+                    </ThemedText>
+                  </View>
+                </Pressable>
+              </Link>
+            );
+          })}
         </View>
       </ScrollView>
     </ThemedView>
@@ -134,11 +146,34 @@ const styles = StyleSheet.create({
     width: 160,
     gap: Spacing.one,
   },
+  imageWrap: {
+    position: 'relative',
+    width: 160,
+    height: 160,
+  },
   image: {
     width: 160,
     height: 160,
     borderRadius: Spacing.two,
     backgroundColor: '#222',
+  },
+  imagePlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  playBadge: {
+    position: 'absolute',
+    right: Spacing.two,
+    bottom: Spacing.two,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderWidth: 1,
+    borderColor: '#00c1d1',
+  },
+  playBadgeText: {
+    color: '#7ee9f2',
   },
   caption: {
     gap: 2,

@@ -139,12 +139,17 @@ export interface HashtagMention {
   created_at: string;
 }
 
+export type MediaType = 'photo' | 'video';
+
 export interface DivePhoto {
   id: string;
   dive_id: string;
   storage_path: string;
   caption: string | null;
   taken_at: string | null;
+  media_type: MediaType;
+  duration_ms: number | null;
+  poster_path: string | null;
 }
 
 export type TideState = 'low' | 'rising' | 'high' | 'falling';
