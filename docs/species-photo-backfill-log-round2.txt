@@ -1,0 +1,170 @@
+
+== Species photo backfill  ==
+Supabase: https://mtxdiwgoukqtmfrnmtmi.supabase.co
+Attributing uploads to admin user: 3f0c14a8-5d51-427c-b6a1-f3408ca6748e
+Species needing a primary photo: 116
+[  1/116] ✗ algae-hydroid — no WM match
+[  2/116] ✗ angular-brittle-star — no WM match
+[  3/116] ✗ antiguan-cave-shrimp — no WM match
+[  4/116] ✓ azure-overgrowing-tunicate — (c) larvalfishguy, some rights reserved (CC BY-NC) · via iNaturalist
+[  5/116] ✗ azure-vase-sponge — no WM match
+[  6/116] ✗ baba-s — no WM match
+[  7/116] ✓ bald — (c) Pauline Walsh Jacobson, some rights reserved (CC BY), uploaded by Pauline Walsh Jacobson · via iNaturalist
+[  8/116] ✗ banded-butterflyfish — no WM match
+[  9/116] ✗ banded-snapping-shrimp — no WM match
+[ 10/116] ✓ bantam-bass — (c) Mélodie Caussat, some rights reserved (CC BY-NC), uploaded by Mélodie Caussat · via iNaturalist
+[ 11/116] ✗ baroque-cave-cup-coral — no WM match
+[ 12/116] ✗ barred-cardinalfish — no WM match
+[ 13/116] ✗ barred-hamlet — no WM match
+[ 14/116] ✗ bicolored-flatworm — no WM match
+[ 15/116] ✗ black-aglaja — no WM match
+[ 16/116] ✓ black-condominium — (c) Ben Eddy, some rights reserved (CC BY-NC), uploaded by Ben Eddy · via iNaturalist
+[ 17/116] ✓ black-coral — (c) blocky, all rights reserved, uploaded by blocky · via iNaturalist
+[ 18/116] ✓ blackfin — (c) Kerry Lewis, some rights reserved (CC BY-NC), uploaded by Kerry Lewis · via iNaturalist
+[ 19/116] ✗ bleeding-teeth-bryozoan — no WM match
+[ 20/116] ✗ blistered-saucer-leaf-alga — no WM match
+[ 21/116] ✗ blue-crust-coral — no WM match
+[ 22/116] ✗ blue-tang-surgeonfish — no WM match
+[ 23/116] ✓ bluebell — (c) Dan Monceaux, some rights reserved (CC BY-NC), uploaded by Dan Monceaux · via iNaturalist
+[ 24/116] ✓ bluestriped-grunt — (c) Cos, some rights reserved (CC BY-SA), uploaded by Cos · via iNaturalist
+[ 25/116] ✓ bolinopsis — (c) dougperrine, all rights reserved · via iNaturalist
+[ 26/116] ✓ brain-sponge — (c) Robin White, some rights reserved (CC BY-NC), uploaded by Robin White · via iNaturalist
+[ 27/116] ✗ branching — no WM match
+[ 28/116] ✗ branching-bulb-alga — no WM match
+[ 29/116] ✗ branching-leaf-alga — no WM match
+[ 30/116] ✓ brazilian-twig-alga — (c) David Patriquin, all rights reserved, uploaded by David Patriquin · via iNaturalist
+[ 31/116] ✗ bristle-ball-brush — no WM match
+[ 32/116] ✗ broadsaddle — no WM match
+[ 33/116] ✗ brown — no WM match
+[ 34/116] ✓ brown-bowl-sponge — (c) sea-kangaroo, some rights reserved (CC BY-NC-ND), uploaded by sea-kangaroo · via iNaturalist
+[ 35/116] ✗ brown-crinoid — no WM match
+[ 36/116] ✓ brown-grass — (c) craigjhowe, some rights reserved (CC BY-NC-ND) · via iNaturalist
+[ 37/116] ✓ brown-sponge-zoanthid — (c) Kerry Lewis, some rights reserved (CC BY-NC), uploaded by Kerry Lewis · via iNaturalist
+[ 38/116] ✓ brown-variable-sponge — (c) emwilson243, all rights reserved, uploaded by emwilson243 · via iNaturalist
+[ 39/116] ✗ burgundy-crust-alga — no WM match
+[ 40/116] ✓ buried-sponge — (c) sea-kangaroo, some rights reserved (CC BY-NC-ND), uploaded by sea-kangaroo · via iNaturalist
+[ 41/116] ✗ burrowing-shrimp-lobster — no WM match
+[ 42/116] ✓ bushy-black-coral — (c) Hexacorallians of the World, some rights reserved (CC BY-NC-SA) · via iNaturalist
+[ 43/116] ✗ chocolate-cyphoma — no WM match
+[ 44/116] ✗ ciliated-false-squilla-mantis — no WM match
+[ 45/116] ✗ clubclaw — no WM match
+[ 46/116] ✗ cocoa — no WM match
+[ 47/116] ✗ coney — no WM match
+[ 48/116] ✗ convoluted-orange-sponge — no WM match
+[ 49/116] ✗ crevalle — no WM match
+[ 50/116] ✗ cryptic-blade-alga — no WM match
+[ 51/116] ✗ cunina-jelly-jellyfish — no WM match
+[ 52/116] ✗ cyanobacteria — no WM match
+[ 53/116] ✓ diamond — (c) Jofre, some rights reserved (CC BY-NC), uploaded by Jofre · via iNaturalist
+[ 54/116] ⚠ doctorfish — image too large (5.4 MB)
+[ 55/116] ✗ doughnut — no WM match
+[ 56/116] ✓ downy — (c) Thomas Menut, some rights reserved (CC BY-NC), uploaded by Thomas Menut · via iNaturalist
+[ 57/116] ✗ encrusting — no WM match
+[ 58/116] ✓ feather — (c) Matthew Bokach, some rights reserved (CC BY-NC), uploaded by Matthew Bokach · via iNaturalist
+[ 59/116] ✓ feather-bush — (c) Mike G. Rutherford, some rights reserved (CC BY-NC), uploaded by Mike G. Rutherford · via iNaturalist
+[ 60/116] ✓ filament — (c) Pauline Walsh Jacobson, some rights reserved (CC BY), uploaded by Pauline Walsh Jacobson · via iNaturalist
+[ 61/116] ✓ flagfin-glass — (c) Tim Cameron, all rights reserved, uploaded by Tim Cameron · via iNaturalist
+[ 62/116] ✓ flattened — (c) spirula, some rights reserved (CC BY-NC) · via iNaturalist
+[ 63/116] ✗ florida-corallimorph — no WM match
+[ 64/116] ✗ fuzz-ball-alga — no WM match
+[ 65/116] ✓ ghost — (c) Luke Foster, some rights reserved (CC BY-NC), uploaded by Luke Foster · via iNaturalist
+[ 66/116] ✗ glowing-marginella — no WM match
+[ 67/116] ✓ green-feather-alga — Feldmann, J · CC BY 4.0 · Wikimedia Commons
+[ 68/116] ✗ hairy-coral — no WM match
+[ 69/116] ✗ harris — no WM match
+[ 70/116] ✗ hawkwing-conch — no WM match
+[ 71/116] ✗ high-veined — no WM match
+[ 72/116] ⚠ hogfish — image too large (6.0 MB)
+[ 73/116] ✓ key-brotula — (c) Karl Questel, all rights reserved, uploaded by Karl Questel · via iNaturalist
+[ 74/116] ✗ knobbly — no WM match
+[ 75/116] ✗ linesnout — no WM match
+[ 76/116] ✓ longhorn — (c) sea-kangaroo, some rights reserved (CC BY-NC-ND), uploaded by sea-kangaroo · via iNaturalist
+[ 77/116] ✗ longsnout — no WM match
+[ 78/116] ✓ manatee-grass — (c) Kelly Kingon, some rights reserved (CC BY-NC), uploaded by Kelly Kingon · via iNaturalist
+[ 79/116] ✓ manning-s-grass — (c) Kerry Lewis, some rights reserved (CC BY-NC), uploaded by Kerry Lewis · via iNaturalist
+[ 80/116] ✗ milk — no WM match
+[ 81/116] ✗ mysids — no WM match
+[ 82/116] ✗ orange-branching-sponge — no WM match
+[ 83/116] ✗ orangesided — no WM match
+[ 84/116] ✓ pale-calcareous-sponge — (c) Hubert Szczygieł, some rights reserved (CC BY-NC), uploaded by Hubert Szczygieł · via iNaturalist
+[ 85/116] ✗ patch-reef — no WM match
+[ 86/116] ✗ plumed — no WM match
+[ 87/116] ✗ princeps — no WM match
+[ 88/116] ✗ puddingwife — no WM match
+[ 89/116] ✓ purple-reef-fan — (c) Kent Miller, some rights reserved (CC BY-ND), uploaded by Kent Miller · via iNaturalist
+[ 90/116] ✗ queen — no WM match
+[ 91/116] ✓ red-banded — (c) Sylvain Le Bris, some rights reserved (CC BY-NC), uploaded by Sylvain Le Bris · via iNaturalist
+[ 92/116] ✓ red-clingfish — (c) Frank Krasovec, some rights reserved (CC BY-NC), uploaded by Frank Krasovec · via iNaturalist
+[ 93/116] ✗ redtail — no WM match
+[ 94/116] ⚠ reef-croaker — image too large (5.7 MB)
+[ 95/116] ✗ ribbon — no WM match
+[ 96/116] ✗ ribbon-worms — no WM match
+[ 97/116] ✗ rose-red — no WM match
+[ 98/116] ✗ rusty — no WM match
+[ 99/116] ✗ sapsucking-slugs — no WM match
+[100/116] ✗ scrawled — no WM match
+[101/116] ✗ scrawled-2 — no WM match
+[102/116] ✗ sea-plumes — no WM match
+[103/116] ✗ serrated-strap-alga — no WM match
+[104/116] ✓ sharknose — (c) Benoît Segerer, some rights reserved (CC BY-NC), uploaded by Benoît Segerer · via iNaturalist
+[105/116] ✗ smallmouth — no WM match
+[106/116] ✗ smooth — no WM match
+[107/116] ✓ spiral — (c) Claudia Mills, some rights reserved (CC BY-NC), uploaded by Claudia Mills · via iNaturalist
+[108/116] ✗ spotted-cleaner — no WM match
+[109/116] ✗ spotted-drum — no WM match
+[110/116] ⚠ squirrelfish — image too large (7.1 MB)
+[111/116] ✗ stoplight — no WM match
+[112/116] ✗ striped — no WM match
+[113/116] ✗ tiger — no WM match
+[114/116] ✗ tobaccofish — no WM match
+[115/116] ✗ velvet-elysia-sapsucking-slugs — no WM match
+[116/116] ⚠ yellowhead-2 — image too large (7.6 MB)
+
+== Summary ==
+Processed:      116
+Uploaded:       36
+No WM match:    75
+Too large:      5
+Errors:         0
+
+75 species with no WM match (first 40):
+  - algae-hydroid
+  - angular-brittle-star
+  - antiguan-cave-shrimp
+  - azure-vase-sponge
+  - baba-s
+  - banded-butterflyfish
+  - banded-snapping-shrimp
+  - baroque-cave-cup-coral
+  - barred-cardinalfish
+  - barred-hamlet
+  - bicolored-flatworm
+  - black-aglaja
+  - bleeding-teeth-bryozoan
+  - blistered-saucer-leaf-alga
+  - blue-crust-coral
+  - blue-tang-surgeonfish
+  - branching
+  - branching-bulb-alga
+  - branching-leaf-alga
+  - bristle-ball-brush
+  - broadsaddle
+  - brown
+  - brown-crinoid
+  - burgundy-crust-alga
+  - burrowing-shrimp-lobster
+  - chocolate-cyphoma
+  - ciliated-false-squilla-mantis
+  - clubclaw
+  - cocoa
+  - coney
+  - convoluted-orange-sponge
+  - crevalle
+  - cryptic-blade-alga
+  - cunina-jelly-jellyfish
+  - cyanobacteria
+  - doughnut
+  - encrusting
+  - florida-corallimorph
+  - fuzz-ball-alga
+  - glowing-marginella

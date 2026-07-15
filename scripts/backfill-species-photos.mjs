@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 /**
- * Backfill species photos from Wikimedia Commons / Wikipedia.
+ * Backfill species photos from Wikipedia / Wikimedia Commons / iNaturalist.
  *
- * For each verified species without a primary photo, this script:
- *   1. Queries Wikipedia by scientific_name for the article's lead image
- *   2. Falls back to Wikimedia Commons search if the article has no image
- *   3. Fetches the pre-resized JPEG (width=2048)
- *   4. Uploads it to Supabase Storage: species-photos/{species_id}/{randomId}.jpg
- *   5. Inserts a species_photos row with is_primary=true + WM attribution
+ * For each verified species without a primary photo, this script tries three
+ * sources in order and stops at the first hit:
+ *   1. Wikipedia lead image by scientific_name (pageimages API)
+ *   2. Wikimedia Commons image search by scientific_name
+ *   3. iNaturalist taxa API — better coverage for marine invertebrates,
+ *      sponges, algae, and other WM-thin categories
+ *
+ * Downloads a pre-scaled image (WM: width=2048, iNat: large_url ~1024px),
+ * uploads it to Supabase Storage, and inserts a species_photos row with
+ * is_primary=true and attribution/license from the source.
  *
  * Idempotent: species that already have a primary photo are skipped.
  *
@@ -216,6 +220,36 @@ async function listSpeciesNeedingPhotos() {
   return (allSp ?? []).filter((s) => !withPrimary.has(s.id));
 }
 
+async function inaturalistImage(scientificName) {
+  const url = new URL('https://api.inaturalist.org/v1/taxa');
+  url.searchParams.set('q', scientificName);
+  url.searchParams.set('rank', 'species');
+  url.searchParams.set('per_page', '5');
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
+  if (!res.ok) return null;
+  const json = await res.json();
+  // Only accept results whose taxon.name exactly matches the queried scientific
+  // name — iNat's search is fuzzy and can return unrelated taxa first.
+  const match = (json.results ?? []).find(
+    (t) => (t.name ?? '').toLowerCase() === scientificName.toLowerCase(),
+  );
+  if (!match?.default_photo) return null;
+  const photo = match.default_photo;
+  const thumbUrl = photo.large_url ?? photo.medium_url ?? photo.original_url;
+  if (!thumbUrl) return null;
+  const license = photo.license_code ? photo.license_code.toUpperCase() : null;
+  const credit = photo.attribution
+    ? `${photo.attribution} · via iNaturalist`
+    : `iNaturalist taxon ${match.id}`;
+  return {
+    thumbUrl,
+    fileName: `iNaturalist:${match.id}`,
+    credit,
+    sourceUrl: `https://www.inaturalist.org/taxa/${match.id}`,
+    license,
+  };
+}
+
 async function resolveWmImage(scientificName) {
   // Try Wikipedia lead image first.
   const wp = await wpLeadImage(scientificName);
@@ -230,7 +264,7 @@ async function resolveWmImage(scientificName) {
       license: stripHtml(meta?.extmetadata?.LicenseShortName?.value) || null,
     };
   }
-  // Fallback: search Commons directly.
+  // Second: search Commons directly.
   await sleep(RATE_LIMIT_MS);
   const cs = await commonsSearchImage(scientificName);
   if (cs) {
@@ -242,6 +276,10 @@ async function resolveWmImage(scientificName) {
       license: stripHtml(cs.extmetadata?.LicenseShortName?.value) || null,
     };
   }
+  // Third: iNaturalist. Better coverage for marine invertebrates + algae.
+  await sleep(RATE_LIMIT_MS);
+  const inat = await inaturalistImage(scientificName);
+  if (inat) return inat;
   return null;
 }
 
