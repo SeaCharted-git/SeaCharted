@@ -109,6 +109,18 @@ export interface Species {
   created_at: string;
 }
 
+export interface SpeciesPhoto {
+  id: string;
+  species_id: string;
+  storage_path: string;
+  is_primary: boolean;
+  credit: string | null;
+  source_url: string | null;
+  license: string | null;
+  uploaded_by: string;
+  created_at: string;
+}
+
 export type SightingCount = 'count_1' | 'count_2_5' | 'count_5_20' | 'count_20_plus' | 'count_school';
 
 export interface Sighting {
