@@ -39,8 +39,13 @@ yarn-error.*
 supabase/.temp/
 supabase/.branches/
 
-# local docs (contains copyrighted PDF used for species names only, not for redistribution)
-docs/
+# copyrighted PDF used for species names only, not for redistribution
+docs/caribbean_reef_life.pdf
+
+# Playwright / Jest output
+test-results/
+dist-e2e/
+playwright-report/
 
 # scratch workspace for species extraction
 tmp/
