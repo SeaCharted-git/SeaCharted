@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import Head from 'expo-router/head';
 import { useEffect, useState } from 'react';
@@ -8,8 +9,12 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { SPECIES_CATEGORY_OPTIONS } from '@/lib/profile/labels';
 import { getTopHashtags, type TagCount } from '@/lib/research/queries';
-import { listSpecies } from '@/lib/species/getSpecies';
-import type { Species, SpeciesCategory } from '@/lib/types';
+import {
+  listSpeciesWithPrimaryPhoto,
+  speciesPhotoUrl,
+  type SpeciesWithPrimaryPhoto,
+} from '@/lib/species/photos';
+import type { SpeciesCategory } from '@/lib/types';
 
 const PAGE_TITLE = 'Cozumel citizen-science research portal';
 const PAGE_DESC =
@@ -17,12 +22,12 @@ const PAGE_DESC =
 
 export default function ResearchHub() {
   const [category, setCategory] = useState<SpeciesCategory>('fish');
-  const [species, setSpecies] = useState<Species[] | null>(null);
+  const [species, setSpecies] = useState<SpeciesWithPrimaryPhoto[] | null>(null);
   const [tags, setTags] = useState<TagCount[] | null>(null);
 
   useEffect(() => {
     setSpecies(null);
-    listSpecies(category).then(setSpecies).catch(() => setSpecies([]));
+    listSpeciesWithPrimaryPhoto(category).then(setSpecies).catch(() => setSpecies([]));
   }, [category]);
 
   useEffect(() => {
@@ -70,10 +75,23 @@ export default function ResearchHub() {
               {species.slice(0, 60).map((sp) => (
                 <Link key={sp.id} href={`/research/species/${sp.slug}`} asChild>
                   <Pressable style={styles.card}>
-                    <ThemedText type="default">{sp.common_name}</ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {sp.scientific_name}
-                    </ThemedText>
+                    {sp.primary_photo ? (
+                      <Image
+                        source={{ uri: speciesPhotoUrl(sp.primary_photo.storage_path) }}
+                        style={styles.cardThumb}
+                        contentFit="cover"
+                      />
+                    ) : (
+                      <View style={[styles.cardThumb, styles.cardThumbEmpty]}>
+                        <ThemedText type="small" themeColor="textSecondary">no photo</ThemedText>
+                      </View>
+                    )}
+                    <View style={styles.cardBody}>
+                      <ThemedText type="default" numberOfLines={2}>{sp.common_name}</ThemedText>
+                      <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+                        {sp.scientific_name}
+                      </ThemedText>
+                    </View>
                   </Pressable>
                 </Link>
               ))}
@@ -158,15 +176,28 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   card: {
-    padding: Spacing.three,
+    padding: Spacing.two,
     borderRadius: Spacing.two,
     borderWidth: 1,
     borderColor: '#333',
     backgroundColor: '#111',
-    minWidth: 220,
-    flexGrow: 1,
-    flexBasis: 220,
-    gap: Spacing.one,
+    width: 180,
+    gap: Spacing.two,
+  },
+  cardThumb: {
+    width: '100%',
+    height: 120,
+    borderRadius: Spacing.one,
+    backgroundColor: '#222',
+  },
+  cardThumbEmpty: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardBody: {
+    gap: 2,
+    paddingHorizontal: Spacing.one,
+    paddingBottom: Spacing.one,
   },
   tagRow: {
     flexDirection: 'row',

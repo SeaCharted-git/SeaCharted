@@ -84,19 +84,53 @@ export interface SiteRecentSighting {
   id: string;
   count_bucket: string;
   created_at: string;
-  species: { id: string; slug: string; common_name: string; scientific_name: string } | null;
+  species: {
+    id: string;
+    slug: string;
+    common_name: string;
+    scientific_name: string;
+    primary_photo_path: string | null;
+  } | null;
 }
 
 export async function getRecentSightingsAtSite(siteId: string): Promise<SiteRecentSighting[]> {
   const { data, error } = await supabase
     .from('sightings')
     .select(
-      '*, dive:dives!inner(id, site_id, is_public), species(id, slug, common_name, scientific_name)',
+      '*, dive:dives!inner(id, site_id, is_public), species(id, slug, common_name, scientific_name, species_photos(storage_path, is_primary))',
     )
     .eq('dive.site_id', siteId)
     .eq('dive.is_public', true)
     .order('created_at', { ascending: false })
     .limit(20);
   if (error) throw error;
-  return (data ?? []) as SiteRecentSighting[];
+  type Raw = {
+    id: string;
+    count_bucket: string;
+    created_at: string;
+    species: {
+      id: string;
+      slug: string;
+      common_name: string;
+      scientific_name: string;
+      species_photos: { storage_path: string; is_primary: boolean }[];
+    } | null;
+  };
+  return (data ?? []).map((row: unknown) => {
+    const r = row as Raw;
+    if (!r.species) return { id: r.id, count_bucket: r.count_bucket, created_at: r.created_at, species: null };
+    const primary = r.species.species_photos?.find((p) => p.is_primary) ?? null;
+    return {
+      id: r.id,
+      count_bucket: r.count_bucket,
+      created_at: r.created_at,
+      species: {
+        id: r.species.id,
+        slug: r.species.slug,
+        common_name: r.species.common_name,
+        scientific_name: r.species.scientific_name,
+        primary_photo_path: primary?.storage_path ?? null,
+      },
+    };
+  });
 }

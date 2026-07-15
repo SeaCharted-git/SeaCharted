@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
@@ -12,8 +13,12 @@ import {
   upsertSighting,
   type SightingWithSpecies,
 } from '@/lib/sightings/getSightings';
-import { listSpecies } from '@/lib/species/getSpecies';
-import type { SightingCount, Species, SpeciesCategory } from '@/lib/types';
+import {
+  listSpeciesWithPrimaryPhoto,
+  speciesPhotoUrl,
+  type SpeciesWithPrimaryPhoto,
+} from '@/lib/species/photos';
+import type { SightingCount, SpeciesCategory } from '@/lib/types';
 
 interface Props {
   diveId: string;
@@ -110,9 +115,9 @@ interface PickerProps {
 function SightingPicker({ visible, diveId, onClose, onSaved }: PickerProps) {
   const [category, setCategory] = useState<SpeciesCategory>('fish');
   const [search, setSearch] = useState('');
-  const [species, setSpecies] = useState<Species[]>([]);
+  const [species, setSpecies] = useState<SpeciesWithPrimaryPhoto[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<Species | null>(null);
+  const [selected, setSelected] = useState<SpeciesWithPrimaryPhoto | null>(null);
   const [count, setCount] = useState<SightingCount>('count_1');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
@@ -121,7 +126,7 @@ function SightingPicker({ visible, diveId, onClose, onSaved }: PickerProps) {
   useEffect(() => {
     if (!visible) return;
     setLoading(true);
-    listSpecies(category)
+    listSpeciesWithPrimaryPhoto(category)
       .then((s) => setSpecies(s))
       .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false));
@@ -203,12 +208,23 @@ function SightingPicker({ visible, diveId, onClose, onSaved }: PickerProps) {
                   onPress={() => setSelected(sp)}
                   style={[styles.speciesRow, isSel && styles.speciesRowSel]}
                 >
-                  <ThemedText type="default" style={isSel ? styles.selectedText : undefined}>
-                    {sp.common_name}
-                  </ThemedText>
-                  <ThemedText type="small" themeColor={isSel ? undefined : 'textSecondary'} style={isSel ? styles.selectedText : undefined}>
-                    {sp.scientific_name}
-                  </ThemedText>
+                  {sp.primary_photo ? (
+                    <Image
+                      source={{ uri: speciesPhotoUrl(sp.primary_photo.storage_path) }}
+                      style={styles.speciesThumb}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <View style={[styles.speciesThumb, styles.speciesThumbEmpty]} />
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <ThemedText type="default" style={isSel ? styles.selectedText : undefined}>
+                      {sp.common_name}
+                    </ThemedText>
+                    <ThemedText type="small" themeColor={isSel ? undefined : 'textSecondary'} style={isSel ? styles.selectedText : undefined}>
+                      {sp.scientific_name}
+                    </ThemedText>
+                  </View>
                 </Pressable>
               );
             })}
@@ -306,7 +322,10 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   speciesRow: {
-    padding: Spacing.three,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    padding: Spacing.two,
     borderRadius: Spacing.two,
     borderWidth: 1,
     borderColor: '#333',
@@ -315,6 +334,16 @@ const styles = StyleSheet.create({
   speciesRowSel: {
     backgroundColor: '#00c1d1',
     borderColor: '#00c1d1',
+  },
+  speciesThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: Spacing.one,
+    backgroundColor: '#222',
+  },
+  speciesThumbEmpty: {
+    borderWidth: 1,
+    borderColor: '#333',
   },
   selectedText: {
     color: '#000',

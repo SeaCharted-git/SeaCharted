@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Link, useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { useEffect, useState } from 'react';
@@ -9,7 +10,8 @@ import { Spacing } from '@/constants/theme';
 import { SIGHTING_COUNT_OPTIONS, SPECIES_CATEGORY_OPTIONS } from '@/lib/profile/labels';
 import { getSightingsForSpecies, type PublicSighting } from '@/lib/research/queries';
 import { getSpeciesBySlug, listSpecies } from '@/lib/species/getSpecies';
-import type { Species } from '@/lib/types';
+import { listSpeciesPhotos, speciesPhotoUrl } from '@/lib/species/photos';
+import type { Species, SpeciesPhoto } from '@/lib/types';
 
 export async function generateStaticParams(): Promise<Record<string, string>[]> {
   try {
@@ -24,6 +26,7 @@ export default function SpeciesPage() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const [species, setSpecies] = useState<Species | null>(null);
   const [sightings, setSightings] = useState<PublicSighting[] | null>(null);
+  const [photos, setPhotos] = useState<SpeciesPhoto[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -31,7 +34,10 @@ export default function SpeciesPage() {
     getSpeciesBySlug(slug).then((s) => {
       setSpecies(s);
       setLoaded(true);
-      if (s) getSightingsForSpecies(s.id).then(setSightings).catch(() => setSightings([]));
+      if (s) {
+        getSightingsForSpecies(s.id).then(setSightings).catch(() => setSightings([]));
+        listSpeciesPhotos(s.id).then(setPhotos).catch(() => setPhotos([]));
+      }
     });
   }, [slug]);
 
@@ -65,6 +71,25 @@ export default function SpeciesPage() {
         <meta property="og:description" content={desc} />
       </Head>
       <ScrollView contentContainerStyle={styles.scroll}>
+        {(() => {
+          const primary = photos.find((p) => p.is_primary);
+          if (!primary) return null;
+          return (
+            <View style={styles.heroBlock}>
+              <Image
+                source={{ uri: speciesPhotoUrl(primary.storage_path) }}
+                style={styles.hero}
+                contentFit="cover"
+              />
+              {primary.credit ? (
+                <ThemedText type="small" themeColor="textSecondary">
+                  {primary.credit}
+                </ThemedText>
+              ) : null}
+            </View>
+          );
+        })()}
+
         <View>
           <ThemedText type="title">{species.common_name}</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
@@ -81,6 +106,28 @@ export default function SpeciesPage() {
             descriptions; not yet written for this species.
           </ThemedText>
         )}
+
+        {photos.filter((p) => !p.is_primary).length > 0 ? (
+          <View style={styles.section}>
+            <ThemedText type="subtitle">Gallery</ThemedText>
+            <View style={styles.gallery}>
+              {photos.filter((p) => !p.is_primary).map((p) => (
+                <View key={p.id} style={styles.galleryCell}>
+                  <Image
+                    source={{ uri: speciesPhotoUrl(p.storage_path) }}
+                    style={styles.galleryImg}
+                    contentFit="cover"
+                  />
+                  {p.credit ? (
+                    <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+                      {p.credit}
+                    </ThemedText>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         <View style={styles.section}>
           <ThemedText type="subtitle">Recent public sightings</ThemedText>
@@ -139,12 +186,36 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
+  heroBlock: {
+    gap: Spacing.two,
+  },
+  hero: {
+    width: '100%',
+    aspectRatio: 16 / 10,
+    borderRadius: Spacing.three,
+    backgroundColor: '#111',
+  },
   section: {
     gap: Spacing.two,
     padding: Spacing.four,
     borderRadius: Spacing.three,
     borderWidth: 1,
     borderColor: '#222',
+  },
+  gallery: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+  },
+  galleryCell: {
+    width: 160,
+    gap: Spacing.one,
+  },
+  galleryImg: {
+    width: '100%',
+    height: 120,
+    borderRadius: Spacing.two,
+    backgroundColor: '#111',
   },
   list: {
     gap: Spacing.two,

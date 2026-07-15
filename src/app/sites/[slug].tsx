@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import { fetchWeatherSample, type WeatherSample } from '@/lib/conditions/openMet
 import { SIGHTING_COUNT_OPTIONS } from '@/lib/profile/labels';
 import { getRecentSightingsAtSite, type SiteRecentSighting } from '@/lib/research/queries';
 import { getSiteBySlug, getSites } from '@/lib/sites/getSites';
+import { speciesPhotoUrl } from '@/lib/species/photos';
 import type { DiveSite } from '@/lib/types';
 
 export async function generateStaticParams(): Promise<Record<string, string>[]> {
@@ -172,6 +174,15 @@ export default function SitePage() {
               <View style={styles.sightList}>
                 {sightings.slice(0, 10).map((s) => (
                   <View key={s.id} style={styles.sightRow}>
+                    {s.species?.primary_photo_path ? (
+                      <Image
+                        source={{ uri: speciesPhotoUrl(s.species.primary_photo_path) }}
+                        style={styles.sightThumb}
+                        contentFit="cover"
+                      />
+                    ) : (
+                      <View style={[styles.sightThumb, styles.sightThumbEmpty]} />
+                    )}
                     <View style={{ flex: 1 }}>
                       {s.species ? (
                         <Link href={`/research/species/${s.species.slug}`} asChild>
@@ -249,8 +260,18 @@ const styles = StyleSheet.create({
   },
   sightRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     gap: Spacing.two,
     padding: Spacing.two,
+  },
+  sightThumb: {
+    width: 36,
+    height: 36,
+    borderRadius: Spacing.one,
+    backgroundColor: '#222',
+  },
+  sightThumbEmpty: {
+    borderWidth: 1,
+    borderColor: '#333',
   },
 });
